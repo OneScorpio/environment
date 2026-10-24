@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>校园低碳行为管理与积分系统 - 注册</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<!-- 注册卡片 -->
+<div class="card">
+  <!-- 顶部标题区域 -->
+  <div class="header">
+    <h1>校园低碳行为管理与积分系统 - 注册</h1>
+    <p>请填写以下信息完成注册</p>
+  </div>
+
+  <!-- 表单区域 -->
+  <form action="/user/register" class="form-container">
+    <!-- 账号输入 -->
+    <div class="form-group">
+      <label for="userid">
+        <span class="input-icon">👤</span>账号
+      </label>
+      <div class="input-container">
+        <span class="input-icon">👤</span>
+        <input type="text" id="userid" name="userid" placeholder="请输入您的账号，长度不超过10" required>
+      </div>
+    </div>
+
+    <!-- 密码输入 -->
+    <div class="form-group">
+      <label for="password">
+        <span class="input-icon">🔒</span>密码
+      </label>
+      <div class="input-container">
+        <span class="input-icon">🔒</span>
+        <input type="password" id="password" name="password" placeholder="请输入您的密码" required>
+      </div>
+    </div>
+
+    <!-- 用户名输入 -->
+    <div class="form-group">
+      <label for="username">
+        <span class="input-icon">👤</span>用户名
+      </label>
+      <div class="input-container">
+        <span class="input-icon">👤</span>
+        <input type="text" id="username" name="username" placeholder="请输入您的用户名" required>
+      </div>
+    </div>
+  <!--班级-->
+    <div class="form-group">
+      <label for="classname">
+        <span class="input-icon">👥</span>班级
+        <input type="text" id="classname" name="classname" placeholder="请输入您的班级" required>
+      </label>
+    </div>
+<!--    状态-->
+    <div class="form-group">
+<!--      <label for="status">-->
+<!--        <span class="input-icon">👥</span>状态-->
+<!--      </label>-->
+<!--      <div class="input-container">-->
+<!--        <span class="input-icon">👥</span>-->
+        <input type="hidden" id="status" name="status" value="正常" required>
+<!--      </div>-->
+    </div>
+    <div class="form-group">
+      <label for="department">
+        <span class="input-icon">👥</span>系级
+        <input type="text" id="department" name="department" placeholder="请输入您的系" required>
+      </label>
+    </div>
+
+
+    <!-- 按钮区域 -->
+    <div class="button-group">
+      <button type="submit" class="btn-primary">
+        <span>→</span> 注册
+      </button>
+      <button type="reset" class="btn-secondary">
+        <span>↻</span> 重置
+      </button>
+    </div>
+  </form>
+
+  <!-- 底部信息 -->
+  <div class="footer">
+    <p>© 2025 校园低碳行为管理与积分系统 | 绿色出行 · 节约能源 · 爱护环境</p>
+  </div>
+</div>
+</body>
+</html>

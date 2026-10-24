@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>低碳行为审核</title>
+    <link href="/css/adDetail.css" rel="stylesheet">
+    <link href="/css/font-awesome.css" rel="stylesheet">
+</head>
+<body>
+<header>
+    <div class="header-container">
+        <div class="logo">
+            <i class="fa fa-check-circle"></i>
+            <h1>低碳行为管理系统</h1>
+        </div>
+        <nav>
+            <ul class="nav-list">
+                <li><a href="/user/logout" >退出登录<i class="fa fa-home"></i></a></li>
+<!--                <li><a href="#"><i class="fa fa-history"></i></a></li>-->
+<!--                <li><a href="#"><i class="fa fa-bar-chart"></i></a></li>-->
+<!--                <li><a href="#" class="active"><i class="fa fa-cog"></i></a></li>-->
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <div class="section-header">
+        <h2>低碳行为审核</h2>
+        <p>审核用户提交的低碳行为记录</p>
+    </div>
+
+    <div class="filter-section">
+        <div class="filter-grid">
+            <div class="filter-item">
+                <label>用户姓名</label>
+                <input type="text" id="name-filter" placeholder="输入姓名搜索">
+            </div>
+            <div class="filter-item">
+                <label>项目名称</label>
+                <input type="text" id="project-filter" placeholder="输入项目名称搜索">
+            </div>
+            <div class="filter-item">
+                <label>审核状态</label>
+                <select id="status-filter">
+                    <option value="">全部状态</option>
+                    <option value="待审核">待审核</option>
+                    <option value="已通过">已通过</option>
+                    <option value="已拒绝">已拒绝</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                <tr>
+                    <th>项目ID</th>
+                    <th>用户ID</th>
+                    <th>用户姓名</th>
+                    <th>项目名称</th>
+                    <th>项目描述</th>
+                    <th>申请积分</th>
+                    <th>状态</th>
+                    <th>创建时间</th>
+                    <th class="text-right">操作</th>
+                </tr>
+                </thead>
+                <tbody id="review-table-body">
+                <tr th:each="project : ${projects}">
+                    <td th:text="${project.projectid}">项目ID</td>
+                    <td th:text="${project.userid}">用户ID</td>
+                    <td th:text="${project.username}">用户姓名</td>
+                    <td th:text="${project.projectname}">项目名称</td>
+                    <td th:text="${project.projectdesc}">项目描述</td>
+                    <td th:text="${project.points}">申请积分</td>
+                    <td>
+                      <span th:switch="${project.status}" class="status-badge">
+                        <span th:case="'待审核'" class="status-pending">待审核</span>
+                        <span th:case="'通过'" class="status-approved">已通过</span>
+                        <span th:case="'拒绝'" class="status-badge">已拒绝</span>
+                      </span>
+                    </td>
+                    <td th:text="${#dates.format(project.createtime, 'yyyy-MM-dd HH:mm')}">创建时间</td>
+                    <td class="text-right">
+<!--                        <button class="btn-view" th:attr="data-id=${project.projectid}">查看</button>-->
+<!--                        <button th:if="${project.status == 'pending'}" class="btn-review" th:attr="data-id=${project.projectid}">审核</button>-->
+                        <a th:href="@{/admin/toEdit(projectid=${project.projectid})}" class="btn-view">编辑</a>
+
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="no-result" class="no-result hidden">
+            <i class="fa fa-search"></i>
+            <p>没有找到匹配的记录</p>
+        </div>
+
+        <div id="pagination" class="pagination">
+            <div class="page-info">
+                显示 <span id="start-count">0</span> 到 <span id="end-count">0</span> 条，共 <span id="total-count">0</span> 条记录
+            </div>
+            <div class="page-controls">
+                <button id="prev-page" class="btn-secondary" disabled>上一页</button>
+                <div id="page-numbers" class="page-numbers"></div>
+                <button id="next-page" class="btn-secondary" disabled>下一页</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-content">
+        <p>© 2025 校园低碳行为管理系统 | 绿色出行 · 节约能源 · 爱护环境</p>
+    </div>
+</footer>
+
+<!-- 查看详情模态框 -->
+<div id="detail-modal" class="modal-overlay hidden">
+    <div class="modal-content wide-modal">
+        <h3>项目详情</h3>
+        <div class="modal-body">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <label>项目ID</label>
+                    <p id="detail-project-id"></p>
+                </div>
+                <div class="detail-item">
+                    <label>用户ID</label>
+                    <p id="detail-user-id"></p>
+                </div>
+                <div class="detail-item">
+                    <label>用户姓名</label>
+                    <p id="detail-username"></p>
+                </div>
+                <div class="detail-item">
+                    <label>项目名称</label>
+                    <p id="detail-project-name"></p>
+                </div>
+                <div class="detail-item full-width">
+                    <label>项目描述</label>
+                    <p id="detail-project-desc"></p>
+                </div>
+                <div class="detail-item">
+                    <label>申请积分</label>
+                    <p id="detail-points"></p>
+                </div>
+                <div class="detail-item">
+                    <label>状态</label>
+                    <p id="detail-status"></p>
+                </div>
+                <div class="detail-item">
+                    <label>创建时间</label>
+                    <p id="detail-create-time"></p>
+                </div>
+                <div class="detail-item">
+                    <label>更新时间</label>
+                    <p id="detail-update-time"></p>
+                </div>
+                <div class="detail-item full-width">
+                    <label>项目图片</label>
+                    <div id="detail-image-container" class="image-container"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button id="detail-modal-close" class="btn-secondary">关闭</button>
+        </div>
+    </div>
+</div>
+
+<!-- 审核模态框 -->
+<div id="review-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <h3>审核记录</h3>
+        <div class="modal-body">
+            <p>项目ID: <span id="modal-project-id"></span></p>
+            <p>用户: <span id="modal-user"></span></p>
+            <p>项目名称: <span id="modal-project-name"></span></p>
+            <p>申请积分: <span id="modal-points"></span></p>
+        </div>
+        <div class="form-group">
+            <label>审核意见</label>
+            <textarea id="review-comment" rows="3" placeholder="请输入审核意见..."></textarea>
+        </div>
+        <div class="modal-actions">
+            <button id="modal-cancel" class="btn-secondary">取消</button>
+            <button id="modal-approve" class="btn-approve">通过</button>
+            <button id="modal-reject" class="btn-reject">拒绝</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

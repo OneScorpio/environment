@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>绿色低碳行为申报</title>
+    <link rel="stylesheet" href="/css/add.css">
+</head>
+<body>
+<!-- 顶部导航 -->
+<header class="header">
+    <div class="container flex justify-between items-center">
+        <div class="flex items-center" style="gap: 0.5rem;">
+            <span class="icon icon-secondary">🌿</span>
+            <h1 class="font-bold text-gray-800">绿色低碳行为申报</h1>
+        </div>
+
+            <a th:href="@{/user/detail(userid=${userid})}" class="icon-gray">🏠</a>
+
+    </div>
+</header>
+
+<!-- 主内容区 -->
+<main class="main container">
+    <div class="card">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">申报绿色低碳行为</h2>
+
+        <form action="/app/add?act=add" method="post" class="space-y-4" id="greenBehaviorForm">
+            <div class="form-group">
+                <label for="recordId" class="label">记录ID</label>
+                <input type="text" id="recordId" name="recordId" class="input" placeholder="系统自动生成" readonly value="你不用管">
+            </div>
+
+            <div class="form-group">
+                <label for="projectname" class="label">项目类型 <span class="required">*</span></label>
+                <select id="projectname" name="projectname" class="select" onchange="setPoints()">
+                    <option value="">请选择项目类型</option>
+                    <option value="节能降耗" data-points="7">节能降耗</option>
+                    <option value="绿色出行" data-points="6">绿色出行</option>
+                    <option value="减废回收" data-points="9">减废回收</option>
+                    <option value="节约用水" data-points="10">节约用水</option>
+                    <option value="其他类型" data-points="5">其他类型</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="points" class="label">分数</label>
+                <input type="text" id="points" name="points" class="input" placeholder="自动计算" readonly>
+            </div>
+
+            <div class="form-group">
+                <label class="label">上传图片</label>
+                <div class="upload-area" id="uploadArea">
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <span class="icon-gray">📤</span>
+                        <p style="font-size: 0.875rem; color: var(--gray-500);">点击上传图片</p>
+                    </div>
+                    <input type="file" id="imagepath" name="imagepath" class="hidden" accept="image/*" onchange="previewImage()">
+                    <button type="button" onclick="document.getElementById('imagepath').click()" class="btn-primary mt-2" style="background-color: rgba(22, 93, 255, 0.1); color: var(--primary);">
+                        选择图片
+                    </button>
+                </div>
+                <div id="previewContainer" class="hidden mt-3">
+                    <img id="imagePreview" src="" alt="预览图片" class="preview-img">
+                    <button type="button" onclick="removeImage()" class="btn-danger mt-2">
+                        移除图片
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="projectdesc" class="label">项目描述</label>
+                <textarea id="projectdesc" name="projectdesc" class="textarea" rows="3" placeholder="请输入项目详细描述..."></textarea>
+            </div>
+
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-group">
+                    <label for="createTime" class="label"></label>
+                    <input type="datetime-local" id="createTime" name="createTime" class="input" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label for="updateTime" class="label"></label>
+                    <input type="datetime-local" id="updateTime" name="updateTime" class="input" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="username" class="label"></label>
+                    <input type="text" id="username" name="username" class= "hidden"
+                           th:value="${username}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="status" class="label"></label>
+                    <input type="hidden" id="status" name="status"
+                            th:value="待审核" readonly>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-4 border-t border-gray-100" style="gap: 0.75rem;">
+                <button type="button" class="btn-secondary">
+                    取消
+                </button>
+                <button type="submit" class="btn-primary">
+                    提交申报
+                </button>
+            </div>
+
+        </form>
+    </div>
+</main>
+
+<!-- 页脚 -->
+<footer class="footer">
+    <div class="container">
+        <p style="color: #9CA3AF;">© 2025 绿色低碳行为申报系统</p>
+    </div>
+</footer>
+
+<script>
+    //设置分数
+    function setPoints() {
+        const select = document.getElementById('projectname');
+        const pointsInput = document.getElementById('points');
+        const selectedOption = select.options[select.selectedIndex];
+
+        if(selectedOption && selectedOption.dataset.points) {
+            pointsInput.value = selectedOption.dataset.points;
+        } else {
+            pointsInput.value = '';
+        }
+    }
+
+        // 图片预览功能
+        function previewImage() {
+        const fileInput = document.getElementById('imagepath');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('imagePreview');
+        const uploadArea = document.getElementById('uploadArea');
+
+        if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+        previewImage.src = e.target.result;
+        previewContainer.classList.remove('hidden');
+        uploadArea.classList.add('hidden');
+    }
+
+        reader.readAsDataURL(fileInput.files[0]);
+    }
+    }
+
+        // 移除图片功能
+        function removeImage() {
+        const fileInput = document.getElementById('imagepath');
+        const previewContainer = document.getElementById('previewContainer');
+        const uploadArea = document.getElementById('uploadArea');
+
+        fileInput.value = '';
+        previewContainer.classList.add('hidden');
+        uploadArea.classList.remove('hidden');
+    }
+
+
+</script>
+</body>
+</html>

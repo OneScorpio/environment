@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑低碳行为记录</title>
+    <link rel="stylesheet" href="/css/edit.css">
+    <!--    <script>-->
+    <!--        // 动态注入CSS（可选）-->
+    <!--        function injectCSS() {-->
+    <!--            const link = document.createElement('link');-->
+    <!--            link.rel = 'stylesheet';-->
+    <!--            link.href = '/css/edit-styles.css';-->
+    <!--            document.head.appendChild(link);-->
+    <!--        }-->
+    <!--        window.addEventListener('DOMContentLoaded', injectCSS);-->
+    <!--    </script>-->
+</head>
+<body>
+<!-- 顶部导航 -->
+<header class="header">
+    <div class="container flex justify-between items-center">
+        <div class="flex items-center" style="gap: 0.5rem;">
+            <span>🌿</span>
+            <h1 class="text-lg font-bold">低碳行为管理系统</h1>
+        </div>
+        <nav>
+            <ul class="flex" style="gap: 1rem;">
+                <li>
+                    <a th:href="@{/admin/adDetail(adminid=${adminid})}" class="hover:text-light transition-colors">🏠</a>
+
+                    <!--                    <a href="@{/user/detail(userid=${userid})}" class="hover:text-light transition-colors">🏠</a>-->
+                </li>
+                <!--                <li><a href="#" class="font-bold">🕒</a></li>-->
+                <!--                <li><a href="#" class="hover:text-light transition-colors">📊</a></li>-->
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="main container">
+    <!-- 页面标题 -->
+    <div class="mb-6">
+        <h2 class="text-xl font-bold text-gray-800">编辑低碳行为记录</h2>
+    </div>
+
+    <!-- 编辑表单 -->
+    <div class="card">
+        <form action="#" th:action="@{/admin/edit}" th:object="${project}" method="post">
+            <input type="hidden" th:field="*{projectid}" />
+            <input type="hidden" th:field="${adminid}" />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="form-group">
+                    <label class="label">用户ID</label>
+                    <input type="text" th:field="*{userid}" class="input" readonly/>
+                </div>
+                <div class="form-group">
+                    <label class="label">用户姓名</label>
+                    <input type="text" th:field="*{username}" class="input" readonly/>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div class="form-group">
+                    <label class="label">项目类型</label>
+                    <select th:field="*{projectname}" class="select">
+                        <option value="节能降耗">节能降耗</option>
+                        <option value="绿色出行">绿色出行</option>
+                        <option value="减废回收">减废回收</option>
+                        <option value="节约用水">节约用水</option>
+                        <option value="其他类型">其他类型</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="label">对应分数</label>
+                    <input type="text" th:field="*{points}" class="input" readonly />
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="label">项目描述</label>
+                <textarea th:field="*{projectdesc}" class="textarea"></textarea>
+            </div>
+            <div class="mt-4">
+                <label class="label">审核状态</label>
+                <select th:field="*{status}" class="select">
+                    <option value="待审核">待审核</option>
+                    <option value="通过">通过</option>
+                    <option value="拒绝">拒绝</option>
+                </select>
+            </div>
+
+            <div class="flex justify-end mt-6">
+                <button type="submit" class="btn btn-primary">确定</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer class="footer mt-10">
+    <div class="container">
+        <p>© 2025 校园低碳行为管理系统 | 绿色出行 · 节约能源 · 爱护环境</p>
+    </div>
+</footer>
+</body>
+</html>

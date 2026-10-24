@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>低碳行为积分排名</title>
+<link rel="stylesheet" href="/css/rank.css">
+</head>
+<body>
+<!-- 顶部导航 -->
+<header class="header">
+  <div class="container flex justify-between items-center">
+    <div class="flex items-center" style="gap: 0.5rem;">
+      <span>🏆</span>
+      <h1 class="text-lg font-bold">低碳行为管理系统</h1>
+    </div>
+    <nav>
+      <ul class="flex" style="gap: 1rem;">
+        <li><a th:href="@{/user/detail(userid=${userid})}" class="hover:text-light transition-colors">🏠</a></li>
+<!--        <li><a href="#" class="hover:text-light transition-colors">🕒</a></li>-->
+<!--        <li><a href="#" class="font-bold">📊</a></li>-->
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="main container">
+  <!-- 页面标题 -->
+  <div class="mb-6">
+    <h2 class="text-xl font-bold text-gray-800">低碳行为积分排名</h2>
+    <p class="text-gray-600" style="font-size: 0.875rem;">查看所有用户的低碳行为积分排名情况</p>
+  </div>
+
+  <!-- 数据表格 -->
+  <div class="card">
+    <div class="table-container">
+      <table class="table">
+        <thead>
+        <tr>
+          <th>排名</th>
+          <th>用户ID</th>
+          <th>用户姓名</th>
+          <th>总分</th>
+          <th>最后更新时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item,stat : ${rankPage.records}"
+            th:classappend="${stat.odd}? 'odd-row'">
+          <td>
+            <span th:class="${stat.count <= 3} ? 'rank-'+stat.count : 'rank-other'"
+                  th:text="${rankPage.current * rankPage.size - rankPage.size + stat.count}"></span>
+          </td>
+          <td th:text="${item.userid}"></td>
+          <td th:text="${item.username}"></td>
+          <td th:text="${item.totalpoint}"
+              th:styleappend="${item.totalpoint} >= 100 ? 'color:green' : ''"></td>
+          <td th:text="${#dates.format(item.updatetime, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        </tbody>
+
+        <!-- 分页优化 -->
+        <div class="pagination" th:if="${rankPage.total > 0}">
+          <a th:href="@{/rank(page=1)}" th:if="${currentPage > 1}">首页</a>
+          <a th:href="@{|/rank?page=${currentPage - 1}|}"
+             th:if="${currentPage > 1}">上一页</a>
+
+          <span th:each="i : ${pageRange}">
+            <a th:href="@{|/rank?page=${i}|}"
+               th:classappend="${i == currentPage} ? 'active' : ''"
+               th:text="${i}"></a>
+          </span>
+
+          <a th:href="@{|/rank?page=${currentPage + 1}|}"
+             th:if="${currentPage < totalPages}">下一页</a>
+          <a th:href="@{|/rank?page=${totalPages}|}"
+             th:if="${currentPage < totalPages}">尾页</a>
+        </div>
+      </table>
+    </div>
+
+    <!-- 无结果提示 -->
+    <div id="no-result" class="no-result hidden">
+      <span style="font-size: 2.25rem; color: var(--gray-300); margin-bottom: 0.5rem;">🔍</span>
+      <p>没有找到排名数据</p>
+    </div>
+  </div>
+</main>
+
+<footer class="footer mt-10">
+  <div class="container">
+    <p>© 2025 校园低碳行为管理系统 | 绿色出行 · 节约能源 · 爱护环境</p>
+  </div>
+</footer>
+</body>
+</html>

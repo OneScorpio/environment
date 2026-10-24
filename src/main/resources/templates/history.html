@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>低碳行为历史记录</title>
+    <link rel="stylesheet" href="/css/history.css">
+<!--    <script>-->
+<!--        // 动态注入CSS（可选）-->
+<!--        function injectCSS() {-->
+<!--            const link = document.createElement('link');-->
+<!--            link.rel = 'stylesheet';-->
+<!--            link.href = '/css/history-styles.css';-->
+<!--            document.head.appendChild(link);-->
+<!--        }-->
+<!--        window.addEventListener('DOMContentLoaded', injectCSS);-->
+<!--    </script>-->
+</head>
+<body>
+<!-- 顶部导航 -->
+<header class="header">
+    <div class="container flex justify-between items-center">
+        <div class="flex items-center" style="gap: 0.5rem;">
+            <span>🌿</span>
+            <h1 class="text-lg font-bold">低碳行为管理系统</h1>
+        </div>
+        <nav>
+            <ul class="flex" style="gap: 1rem;">
+                <li><a th:href="@{/user/detail(userid=${userid})}" class="hover:text-light transition-colors">🏠</a></li>
+<!--                <li><a href="#" class="font-bold">🕒</a></li>-->
+<!--                <li><a href="#" class="hover:text-light transition-colors">📊</a></li>-->
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="main container">
+    <!-- 页面标题 -->
+    <div class="mb-6">
+        <h2 class="text-xl font-bold text-gray-800">低碳行为历史记录</h2>
+        <p class="text-gray-600" style="font-size: 0.875rem;">查看所有低碳行为记录与积分情况</p>
+    </div>
+
+    <!-- 搜索筛选 -->
+    <div class="card">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!--            <div class="form-group">-->
+<!--                <label for="name-filter" class="label">用户姓名</label>-->
+<!--                <input type="text" id="name-filter" class="input" placeholder="输入姓名搜索">-->
+<!--            </div>-->
+            <div class="form-group">
+                <label for="type-filter" class="label">项目类型</label>
+                <select id="type-filter" class="select" onchange="filterByProjectname(this.value)">
+                    <option value="">全部类型</option>
+                    <option value="节能降耗">节能降耗</option>
+                    <option value="绿色出行">绿色出行</option>
+                    <option value="减废回收">减废回收</option>
+                    <option value="节约用水">节约用水</option>
+                    <option value="其他类型">其他类型</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- 数据表格 -->
+    <div class="card" style="padding: 0;">
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>记录ID</th>
+                    <th>用户ID</th>
+                    <th>用户姓名</th>
+                    <th>项目类型</th>
+                    <th>项目描述</th>
+                    <th>对应分数</th>
+                    <th>记录时间</th>
+                    <th class="text-right">操作</th>
+                </tr>
+                </thead>
+                <tbody id="projectid" th:if="${!#lists.isEmpty(projectList)}" th:each="project : ${projectList}">
+                <tr th:data-name="${project.username}" th:data-type="${project.projectname}">
+                    <td class="whitespace-nowrap text-gray-900" th:text="${project.projectid}"></td>
+                    <td class="whitespace-nowrap" th:text="${project.userid}"></td>
+                    <td class="whitespace-nowrap" th:text="${project.username}"></td>
+                    <td class="whitespace-nowrap">
+                        <span class="badge" th:classappend="${project.projectname eq '节能降耗'? '节能降耗' : (project.projectname eq '绿色出行'? '绿色出行' : (project.projectname eq '减废回收'? '减废回收' : (project.projectname eq '节约用水'? '节约用水' : '其他类型')))}"
+                              th:text="${project.projectname}">
+                        </span>
+                    </td>
+                    <td class="max-w-xs truncate" th:text="${project.projectdesc}"></td>
+                    <td class="whitespace-nowrap font-medium" style="color: var(--green-600);" th:text="'+' + ${project.points}"></td>
+                    <td class="whitespace-nowrap" th:text="${#dates.format(project.createtime, 'yyyy-MM-dd')}"></td>
+                    <td class="whitespace-nowrap text-right">
+                        <a th:href="@{/app/toEdit(projectid=${project.projectid})}" class="text-indigo-600 hover:text-indigo-900 mr-3">编辑</a>
+                        <a href="#" class="text-red-600 hover:text-red-900"
+                           th:data-id="${project.projectid}" onclick="deleteRecord(this);return false;">删除</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 无结果提示 -->
+        <div id="no-result" class="no-result hidden">
+            <span style="font-size: 2.25rem; color: var(--gray-300); margin-bottom: 0.5rem;">🔍</span>
+            <p>没有找到匹配的记录</p>
+        </div>
+
+        <!-- 分页 -->
+        <div id="pagination" class="pagination">
+            <div class="pagination-info">显示 1 到 5 条，共 5 条记录</div>
+            <div class="pagination-buttons">
+                <button class="pagination-button" disabled>上一页</button>
+                <button class="pagination-button active">1</button>
+                <button class="pagination-button" disabled>下一页</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="footer mt-10">
+    <div class="container">
+        <p>© 2025 校园低碳行为管理系统 | 绿色出行 · 节约能源 · 爱护环境</p>
+    </div>
+</footer>
+
+<script>
+    // 删除记录函数
+    function deleteRecord(link) {
+        if (!confirm('确定要永久删除这条记录吗？删除后无法恢复！')) {
+            return;
+        }
+        const recordId = link.getAttribute('data-id');
+        fetch(`/app/deleteRecord/${recordId}`, {
+            method: 'DELETE'
+        })
+            .then(response => {
+                if (response.ok) {
+                    const row = link.closest('tr');
+                    row.remove();
+                    alert('记录已从数据库中永久删除');
+                    filterRecords();
+                } else {
+                    alert('删除失败，请重试');
+                }
+            })
+            .catch(error => {
+                console.error('删除请求出错:', error);
+                alert('删除时发生错误');
+            });
+    }
+
+    // 搜索功能
+    const nameFilter = document.getElementById('name-filter');
+    const typeFilter = document.getElementById('type-filter');
+    const tableBody = document.getElementById('projectid');
+    // const noResult = document.getElementById('no-result');
+    // const pagination = document.getElementById('pagination');
+    //根据项目类型筛选
+    function filterByProjectname(projectname) {
+        // 获取当前URL并添加类型参数
+        let url = new URL(window.location.href);
+        if(projectname && projectname !== '全部类型') {
+            url.searchParams.set('projectname', projectname);
+        } else {
+            url.searchParams.delete('projectname');
+        }
+        window.location.href = url.toString();
+    }
+    // 初始记录总数
+    updateRecordCount();
+
+    // 监听搜索条件变化
+    nameFilter.addEventListener('input', filterRecords);
+    typeFilter.addEventListener('change', filterRecords);
+
+    // function filterRecords() {
+    //     const username = nameFilter.value.toLowerCase().trim();
+    //     const projectname = typeFilter.value;
+    //     const rows = tableBody.querySelectorAll('tr');
+    //     let visibleCount = 0;
+    //
+    //     rows.forEach(row => {
+    //         const rowUserName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+    //         const rowProjectname = row.querySelector('td:nth-child(4) span').textContent;
+    //
+    //         // 检查是否匹配搜索条件
+    //         const usernameMatch = username === '' || rowUserName.includes(username);
+    //         const projectnameMatch = projectname === '' || rowProjectname === projectname;
+    //
+    //         if (usernameMatch && projectnameMatch) {
+    //             row.style.display = '';
+    //             visibleCount++;
+    //         } else {
+    //             row.style.display = 'none';
+    //         }
+    //     });
+
+        // 显示或隐藏无结果提示
+    //     if (visibleCount === 0) {
+    //         noResult.classList.remove('hidden');
+    //         pagination.classList.add('hidden');
+    //     } else {
+    //         noResult.classList.add('hidden');
+    //         pagination.classList.remove('hidden');
+    //         updateRecordCount(visibleCount);
+    //     }
+    // }
+
+    function updateRecordCount(count) {
+        const total = count || tableBody.querySelectorAll('tr').length;
+        const visible = tableBody.querySelectorAll('tr[style=""]').length || total;
+        const paginationInfo = document.querySelector('.pagination-info');
+        paginationInfo.textContent = `显示 1 到 ${visible} 条，共 ${total} 条记录`;
+    }
+    //默认时所有类型
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedType = urlParams.get('projectname');
+        const typeFilter = document.getElementById('type-filter');
+
+        if(selectedType) {
+            typeFilter.value = selectedType;
+        } else {
+            typeFilter.value = ""; // 默认选中"所有类型"
+        }
+    });
+</script>
+</body>
+</html>

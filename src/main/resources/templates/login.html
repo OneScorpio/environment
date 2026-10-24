@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>校园低碳行为管理与积分系统</title>
+<!--    <style>-->
+<!--        body{-->
+<!--            background-image: url("/images/login.jpg");-->
+<!--            background-size: cover;-->
+<!--            background-position: center;-->
+<!--            background-repeat: no-repeat;-->
+<!--            background-attachment: fixed;-->
+<!--        }-->
+<!--    </style>-->
+  <script type="text/javascript" th:inline="javascript">
+    function refreshCode(){
+      document.getElementById("mycode").src =[[@{/validateCode}]] + "?t=" + Math.random();
+    }
+  </script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<!-- 登录卡片 -->
+<div class="card">
+  <!-- 顶部标题区域 -->
+  <div class="header">
+    <h1>校园低碳行为管理与积分系统</h1>
+    <p>欢迎登录，让我们一起为环保贡献力量</p>
+  </div>
+  <div class="admin-link-container">
+    <a href="/admin/adLogin" class="admin-link">管理员登录入口</a>
+  </div>
+
+  <!-- 表单区域 -->
+  <form action="/user/login" class="form-container">
+    <!-- 账号输入 -->
+    <div class="form-group">
+      <label for="userid">
+<!--        <span class="input-icon">👤</span>账号-->
+      </label>
+      <div class="input-container">
+        <span class="input-icon">👤</span>
+        <input type="text" id="userid" name="userid" placeholder="请输入您的账号" required>
+      </div>
+    </div>
+
+    <!-- 密码输入 -->
+    <div class="form-group">
+      <label for="password">
+      </label>
+      <div class="input-container">
+        <span class="input-icon">🔒</span>
+        <input type="password" id="password" name="password" placeholder="请输入您的密码" required>
+      </div>
+    </div>
+
+    <!-- 验证码 -->
+    <div class="form-group">
+      <label>验证码</label>
+      <div class="code-group">
+        <input type="text" class="code-input" placeholder="请输入验证码" name="code"/>
+        <img th:src="@{/validateCode}" id="mycode">
+        <a href="javascript:refreshCode()">换一张</a>
+      </div>
+    </div>
+
+    <!-- 错误提示 -->
+    <div id="errorMsg" class="error-msg">
+      <p class="error-title">登录失败</p>
+      <p id="errorText">请检查您的账号、密码和验证码</p>
+    </div>
+
+    <!-- 按钮区域 -->
+    <div class="button-group">
+      <button type="submit" class="btn-primary">
+        <span>→</span> 登录
+      </button>
+      <button type="reset" class="btn-secondary">
+        <span>↻</span> 重置
+      </button>
+    </div>
+  </form>
+
+  <div class="button-group">
+    <a href="/user/register" class="btn-secondary">注册</a>
+  </div>
+
+  <!-- 底部信息 -->
+  <div class="footer">
+    <p>© 2025 校园低碳行为管理与积分系统 | 绿色出行 · 节约能源 · 爱护环境</p>
+  </div>
+</div>
+
+</body>
+</html>

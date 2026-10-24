@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户主页</title>
+    <link rel="stylesheet" href="/css/detail.css">
+</head>
+<body>
+<!-- 顶部导航 -->
+<header class="header">
+    <div class="container flex justify-between items-center">
+        <div class="flex items-center" style="gap: 0.5rem;">
+            <span class="icon">🌿</span>
+            <h1 class="text-lg font-bold">低碳行为管理系统</h1>
+        </div>
+        <nav>
+            <ul class="flex" style="gap: 1rem;">
+<!--                <li><a href="#" class="font-bold hover:text-light transition-colors">主页</a></li>-->
+                <li><a href="/app/toRank" class="hover:text-light transition-colors">排名</a></li>
+                <li><a href="/app/toAdd" class="hover:text-light transition-colors">申报</a></li>
+                <li><a href="/app/tohistory" class="hover:text-light transition-colors">历史记录</a></li>
+                <li><a href="/user/logout" class="hover:text-red-500 transition-colors">退出登录</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="main container">
+    <!-- 用户信息 -->
+    <div class="card">
+        <div class="flex flex-col md:flex-row md:items-center justify-between">
+            <div style="margin-bottom: 1rem;">
+                <h2 class="text-xl font-bold text-gray-800">欢迎回来，
+                    <span th:text="${user.username} ?: '未知'"></span>
+                </h2>
+                <p class="text-gray-600">用户ID:
+                    <span th:text="${user.userid}?: '未知'"></span>
+                </p>
+                <p class="text-gray-600">学院:
+                    <span th:text="${user.department} ?: '未知'"></span>
+                </p>
+                <p class="text-gray-600">班级:
+                    <span th:text="${user.classname} ?: '未知'"></span>
+                </p>
+            </div>
+            <div class="flex" style="gap: 1rem;">
+                <a href="/app/toRank" class="link flex items-center">
+                    <span>🏆</span> 查看排名
+                </a>
+                <a href="/app/toAdd" class="link flex items-center">
+                    <span>➕</span> 申报项目
+                </a>
+                <a href="/app/tohistory" class="link flex items-center">
+                    <span>🕒</span> 历史记录
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="card">
+            <div class="flex items-center">
+                <div class="icon-circle">
+                    <span>⭐</span>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">总积分</p>
+                    <p class="text-2xl font-bold text-gray-800">
+                        <span th:text="${user.totalpoint} ?: '0'"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="flex items-center">
+                <div class="icon-circle">
+                    <span>🏆</span>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">当前排名</p>
+                    <p class="text-2xl font-bold text-gray-800">
+                        <span th:text="'第'+${urank.ranksort}+'名' ?:'?'"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="flex items-center">
+                <div class="icon-circle">
+                    <span>✅</span>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">已完成项目</p>
+                    <p class="text-2xl font-bold text-gray-800">
+                        <span th:text="${rankcount} ?: '未知'"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 最近申报记录 -->
+    <div class="card" style="padding: 0;">
+        <div class="px-4 py-3 border-b border-gray-200">
+            <h3 class="font-medium text-gray-800">最近申报记录</h3>
+        </div>
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>申报时间</th>
+                    <th>项目类型</th>
+                    <th>项目描述</th>
+                    <th>积分</th>
+                    <th>状态</th>
+                </tr>
+                </thead>
+
+                <tbody id="record-table-body">
+                <!-- 删除原有静态记录 -->
+                <!-- Deleted:<tr>...</tr> -->
+                <!-- Deleted:<tr>...</tr> -->
+                <!-- Deleted:<tr>...</tr> -->
+
+                <!-- 新增动态循环显示记录，保持原有样式 -->
+                <tr th:each="record,iter : ${papp}" th:if="${iter.index < 3}">
+                    <td class="whitespace-nowrap" th:text="${record.createtime} ?: '未知'"></td>
+                    <td>
+                        <span class="badge" th:classappend="${#strings.equals(record.projectname,'回收利用')} ? 'badge-recycle' : (${#strings.equals(record.projectname,'节能降耗')} ? 'badge-energy' : 'badge-transport')">
+                            <span th:text="${record.projectname} ?: '未知'"></span>
+                        </span>
+                    </td>
+                    <td class="max-w-xs truncate" th:text="${record.projectdesc} ?: '未知'"></td>
+                    <td class="whitespace-nowrap font-medium"
+                        th:style="${#strings.equals(record.status,'已通过')}
+                        ? 'color: var(--green-600);' : 'color: var(--amber-500);'"
+                        th:text="'+' + ${record.points} ?: '0'">
+                    </td>
+                    <td class="whitespace-nowrap">
+            <span th:classappend="${#strings.equals(record.status,'已通过')} ? 'status-approved' : 'status-pending'"
+                  th:text="${record.status} ?: '未知'"></span>
+                    </td>
+                </tr>
+                </tbody>
+                <!-- ... existing code ... -->
+            </table>
+        </div>
+
+        <!-- 无结果提示 -->
+        <div id="no-result" class="no-result hidden">
+            <span class="icon">🔍</span>
+            <p>没有找到您的申报记录</p>
+        </div>
+
+        <!-- 查看更多按钮 -->
+        <div class="px-4 py-3 border-t border-gray-200 text-center">
+            <a href="/app/tohistory" class="link">查看全部记录</a>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    <div class="container">
+        <p>© 2025 校园低碳行为管理系统 | 绿色出行 · 节约能源 · 爱护环境</p>
+    </div>
+</footer>
+
+</body>
+</html>
