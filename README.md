@@ -83,7 +83,7 @@ INSERT INTO admin (adminname, password) VALUES ('your_admin_name', 'your_passwor
 
 ### 3. 修改配置
 
-`src/main/resources/application.properties` 中填写自己的数据库连接信息。**不要把真实密码提交到仓库**，建议改用环境变量：
+`src/main/resources/application.properties` 中填写自己的数据库连接信息。：
 
 ```properties
 spring.datasource.url=${DB_URL:jdbc:mysql://localhost:3306/environment?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8}
